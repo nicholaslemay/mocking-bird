@@ -1,5 +1,7 @@
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using MockingbirdServer.Controllers.Support;
 using MockingbirdServer.Lib;
@@ -14,7 +16,17 @@ namespace MockingbirdServer.Controllers
 
             var matchingPreparedResponse = MatchingPreparedResponse();
 
-            return matchingPreparedResponse == null ? NotFound() : ResponseBuiltFrom(matchingPreparedResponse);
+            return matchingPreparedResponse == null ? DefaultResponseBasedOnVerb() : ResponseBuiltFrom(matchingPreparedResponse);
+        }
+
+        public ActionResult DefaultResponseBasedOnVerb()
+        {
+            var responseBody = string.Format(CultureInfo.InvariantCulture, "Aucun mock associé à la requête: {0}", Request.HttpContext.Request.Path);
+            if (Request.HttpContext.Request.Method == "POST")
+                return StatusCode((int)HttpStatusCode.Created, responseBody);
+            if (new[] {"HEAD", "PUT", "DELETE", "OPTIONS"}.Contains(Request.HttpContext.Request.Method))
+                return StatusCode((int)HttpStatusCode.OK, responseBody);
+            return StatusCode((int)HttpStatusCode.NotImplemented, responseBody);
         }
 
         private ReponsePreparee MatchingPreparedResponse()

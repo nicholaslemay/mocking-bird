@@ -17,7 +17,7 @@ namespace MockingbirdServer.Controllers
             
             ResponsesPrepareesRepository.ResponsesPreparees[reponsePreparee.ScenarioId].Add(reponsePreparee);
             
-            return NoContent();
+            return StatusCode(201);
         }
     }
 
