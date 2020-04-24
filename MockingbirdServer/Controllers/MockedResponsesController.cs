@@ -51,8 +51,10 @@ namespace MockingbirdServer.Controllers
                 return null;
 
             var responsesPrepareesForCurrentScenario = ResponsesPrepareesRepository.ResponsesPreparees[CurrentScenarioId()];
-            return responsesPrepareesForCurrentScenario.FirstOrDefault(r=> r.Url == Request.HttpContext.Request.Path.ToString() 
-                                                                                      && r.Verbe == Request.HttpContext.Request.Method);
+            return responsesPrepareesForCurrentScenario.Where(r=> r.Url == Request.HttpContext.Request.Path.ToString() 
+                                                                                      && r.Verbe == Request.HttpContext.Request.Method)
+                                                       .OrderByDescending(x =>x.CreationDate)
+                                                       .FirstOrDefault();
         }
 
         private Requete RequeteRecue()
