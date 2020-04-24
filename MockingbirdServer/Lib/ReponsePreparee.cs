@@ -1,3 +1,5 @@
+using System;
+
 namespace MockingbirdServer.Lib
 {
     public class ReponsePreparee
@@ -21,11 +23,14 @@ namespace MockingbirdServer.Lib
                     return 204;
                 default:
                     return 200;
-                
             }
             
         }
         
+        public override string ToString()
+        {
+            return @$"Verbe : {Verbe}{Environment.NewLine}Url : {Url}{Environment.NewLine}Payload : {Payload}{Environment.NewLine}StatusCode : {StatusCode}{Environment.NewLine}ScenarioId : {ScenarioId}";
+        }
         
     }
 }

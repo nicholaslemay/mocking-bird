@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -12,14 +13,29 @@ namespace MockingbirdServer.Controllers
     {
         public ActionResult GetMockedResponse()
         {
-            ReceivedRequestRepository.ReceivedRequests.Add(RequeteRecue());
+            var requeteRecue = RequeteRecue();
+            ReceivedRequestRepository.ReceivedRequests.Add(requeteRecue);
 
             var matchingPreparedResponse = MatchingPreparedResponse();
-
-            return matchingPreparedResponse == null ? DefaultResponseBasedOnVerb() : ResponseBuiltFrom(matchingPreparedResponse);
+            
+            var reponse = matchingPreparedResponse == null ? DefaultResponseBasedOnVerb() : ResponseBuiltFrom(matchingPreparedResponse);
+            Trace(requeteRecue, reponse);
+            return reponse;
         }
 
-        public ActionResult DefaultResponseBasedOnVerb()
+        private static void Trace(Requete requete, ActionResult matchingPreparedResponse)
+        {
+            
+            Console.WriteLine("*** Requête reçu ***");
+            Console.WriteLine(requete);
+            Console.WriteLine("");
+            Console.WriteLine("*** Réponse retournée *** ");
+            var reponse = matchingPreparedResponse as ObjectResult;
+            Console.WriteLine(reponse.Value);
+            Console.WriteLine("------------------------------------------");
+        }
+
+        private ActionResult DefaultResponseBasedOnVerb()
         {
             var responseBody = string.Format(CultureInfo.InvariantCulture, "Aucun mock associé à la requête: {0}", Request.HttpContext.Request.Path);
             if (Request.HttpContext.Request.Method == "POST")
