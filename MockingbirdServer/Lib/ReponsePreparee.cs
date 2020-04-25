@@ -13,7 +13,6 @@ namespace MockingbirdServer.Lib
         public string ScenarioId { get; set; } = DefaultScenarioId ;
         public int? StatusCode { get; set; }
         public DateTime CreationDate { get; } = DateTime.Now;
-        
         public Dictionary<string, string> CustomHeaders { get; set; } = new Dictionary<string, string>();
 
         public int StatusCodeOrDefaultForVerbe()
@@ -25,8 +24,6 @@ namespace MockingbirdServer.Lib
             {
                 case "POST":
                     return 201;
-                case "PUT":
-                    return 204;
                 default:
                     return 200;
             }
