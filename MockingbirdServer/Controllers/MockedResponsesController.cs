@@ -40,9 +40,9 @@ namespace MockingbirdServer.Controllers
         {
             var responseBody = string.Format(CultureInfo.InvariantCulture, "Aucun mock associé à la requête: {0}", Request.HttpContext.Request.Path);
             if (Request.HttpContext.Request.Method == "POST")
-                return StatusCode((int)HttpStatusCode.Created, responseBody);
+                return StatusCode((int)HttpStatusCode.Created, JsonSerializer.Serialize(responseBody));
             if (new[] {"HEAD", "PUT", "DELETE", "OPTIONS"}.Contains(Request.HttpContext.Request.Method))
-                return StatusCode((int)HttpStatusCode.OK, responseBody);
+                return StatusCode((int)HttpStatusCode.OK, JsonSerializer.Serialize(responseBody));
             return StatusCode((int)HttpStatusCode.NotImplemented, responseBody);
         }
 
@@ -52,10 +52,15 @@ namespace MockingbirdServer.Controllers
                 return null;
 
             var responsesPrepareesForCurrentScenario = ResponsesPrepareesRepository.ResponsesPreparees[CurrentScenarioId()];
-            return responsesPrepareesForCurrentScenario.Where(r=> r.Url == Request.HttpContext.Request.Path.ToString() + Request.HttpContext.Request.QueryString
-                                                                                      && r.Verbe == Request.HttpContext.Request.Method)
+            return responsesPrepareesForCurrentScenario.Where(Matching)
                                                        .OrderByDescending(x =>x.CreationDate)
                                                        .FirstOrDefault();
+        }
+
+        private bool Matching(ReponsePreparee r)
+        {
+            return string.Equals(r.Url, Request.HttpContext.Request.Path.ToString() + Request.HttpContext.Request.QueryString, StringComparison.InvariantCultureIgnoreCase)
+                   && string.Equals(r.Verbe,Request.HttpContext.Request.Method, StringComparison.InvariantCultureIgnoreCase);
         }
 
         private Requete RequeteRecue()
@@ -71,7 +76,12 @@ namespace MockingbirdServer.Controllers
 
         private ActionResult ResponseBuiltFrom(ReponsePreparee reponsePreparee)
         {
-            return StatusCode(reponsePreparee.StatusCodeOrDefaultForVerbe(), reponsePreparee.Payload);
+            var response = StatusCode(reponsePreparee.StatusCodeOrDefaultForVerbe(), reponsePreparee.Payload);
+            foreach (var (key, value) in reponsePreparee.CustomHeaders)
+            {
+                Response.Headers.Add(key, value);                
+            }
+            return response;
         }
     }
 }

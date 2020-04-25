@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace MockingbirdServer.Lib
 {
@@ -12,6 +13,8 @@ namespace MockingbirdServer.Lib
         public string ScenarioId { get; set; } = DefaultScenarioId ;
         public int? StatusCode { get; set; }
         public DateTime CreationDate { get; } = DateTime.Now;
+        
+        public Dictionary<string, string> CustomHeaders { get; set; } = new Dictionary<string, string>();
 
         public int StatusCodeOrDefaultForVerbe()
         {
