@@ -18,5 +18,15 @@ namespace MockingbirdServer.Controllers
             
             return ReceivedRequestRepository.ReceivedRequests.Where(r=> scenarioId.Equals(r.ScenarioId, StringComparison.InvariantCultureIgnoreCase)).ToList() ;
         }
+        
+        [HttpDelete]
+        public IActionResult Delete([FromQuery]string scenarioId = null)
+        {
+            if (scenarioId == null)
+                ReceivedRequestRepository.ReceivedRequests.Clear();
+            else
+                ReceivedRequestRepository.ReceivedRequests.RemoveAll(x => x.ScenarioId == scenarioId);
+            return StatusCode(200);
+        }
     }
 }

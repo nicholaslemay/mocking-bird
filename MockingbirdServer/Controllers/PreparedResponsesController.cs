@@ -21,6 +21,16 @@ namespace MockingbirdServer.Controllers
             
             return StatusCode(201);
         }
+        
+        [HttpDelete]
+        public IActionResult Delete([FromQuery]string scenarioId = null)
+        {
+            if (scenarioId == null)
+                ResponsesPrepareesRepository.ResponsesPreparees.Clear(); 
+            else
+                ResponsesPrepareesRepository.ResponsesPreparees.Remove(scenarioId);
+            return StatusCode(200);
+        }
 
         private static void Trace(ReponsePreparee reponsePreparee)
         {
