@@ -3,6 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using MockingbirdServer.Controllers.Support;
 using MockingbirdServer.Lib;
@@ -51,7 +52,7 @@ namespace MockingbirdServer.Controllers
                 return null;
 
             var responsesPrepareesForCurrentScenario = ResponsesPrepareesRepository.ResponsesPreparees[CurrentScenarioId()];
-            return responsesPrepareesForCurrentScenario.Where(r=> r.Url == Request.HttpContext.Request.Path.ToString() 
+            return responsesPrepareesForCurrentScenario.Where(r=> r.Url == Request.HttpContext.Request.Path.ToString() + Request.HttpContext.Request.QueryString
                                                                                       && r.Verbe == Request.HttpContext.Request.Method)
                                                        .OrderByDescending(x =>x.CreationDate)
                                                        .FirstOrDefault();
@@ -62,7 +63,7 @@ namespace MockingbirdServer.Controllers
             return new Requete
                 {
                     Verbe = Request.HttpContext.Request.Method,
-                    Chemin = Request.HttpContext.Request.Path,
+                    Chemin = Request.HttpContext.Request.Path + Request.HttpContext.Request.QueryString,
                     Body = new StreamReader(Request.Body).ReadToEndAsync().Result,
                     ScenarioId = CurrentScenarioId()
                 };
