@@ -5,6 +5,8 @@ namespace MockingbirdServer
 {
     public class Program
     {
+        public const string BaseUrl = "http://localhost:5050";
+
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -16,7 +18,7 @@ namespace MockingbirdServer
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseUrls("http://localhost:5000");
+                    webBuilder.UseUrls(BaseUrl);
                 });
 
 

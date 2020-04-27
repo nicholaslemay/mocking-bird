@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using MockingbirdServer.Controllers.Support;
@@ -12,6 +13,7 @@ namespace MockingbirdServer.Controllers
         [HttpPost]
         public IActionResult Post([FromBody]ReponsePreparee reponsePreparee)
         {
+            Trace(reponsePreparee);
             if(!ResponsesPrepareesRepository.ResponsesPreparees.ContainsKey(reponsePreparee.ScenarioId))
                 ResponsesPrepareesRepository.ResponsesPreparees[reponsePreparee.ScenarioId] = new List<ReponsePreparee>();
             
@@ -19,6 +21,26 @@ namespace MockingbirdServer.Controllers
             
             return StatusCode(201);
         }
+        
+        [HttpDelete]
+        public IActionResult Delete([FromQuery]string scenarioId = null)
+        {
+            if (scenarioId == null)
+                ResponsesPrepareesRepository.ResponsesPreparees.Clear(); 
+            else
+                ResponsesPrepareesRepository.ResponsesPreparees.Remove(scenarioId);
+            return StatusCode(200);
+        }
+
+        private static void Trace(ReponsePreparee reponsePreparee)
+        {
+            Console.WriteLine("+++ Ajout d'une réponse préparée +++ ");
+            Console.WriteLine("");
+            Console.WriteLine(reponsePreparee);
+            Console.WriteLine("------------------------------------------");
+        }
+
+        //todo Delete
     }
 
     public class ResponsesPrepareesRepository
